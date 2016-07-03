@@ -1,4 +1,5 @@
 import threading
+import shytlight_simulator as shytlight
 import numpy as np
 from palettable import wesanderson
 
