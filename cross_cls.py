@@ -1,5 +1,5 @@
 import threading
-import shytlight
+import shytlight_simulator as shytlight
 import numpy as np
 from palettable import wesanderson
 
@@ -28,7 +28,7 @@ class CrossPattern(threading.Thread):
 
     def one_flash(self, current_color):
         random_row = np.random.randint(self.n_rows)
-        random_led = np.random.randint(self.n_leds)
+        random_led = np.random.randint(self.n_led)
         brightness = np.zeros((5, 8, 3))
         brightness[random_row, random_led, :] = current_color
 
@@ -47,7 +47,7 @@ class CrossPattern(threading.Thread):
                 rep = 5
                 decreasing = False
 
-            if random_led + offset < self.n_leds:
+            if random_led + offset < self.n_led:
                 brightness[random_row, random_led+offset, :] = current_color
                 rep = 5
                 decreasing = False
@@ -74,7 +74,7 @@ class CrossPattern(threading.Thread):
                 brightness[random_row-offset, random_led, :] = current_color
                 rep = 5
 
-            if random_led + offset < self.n_leds and offset >= 0:
+            if random_led + offset < self.n_led and offset >= 0:
                 brightness[random_row, random_led+offset, :] = current_color
                 rep = 5
 
