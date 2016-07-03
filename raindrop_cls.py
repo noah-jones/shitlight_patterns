@@ -1,13 +1,13 @@
 import threading
-import shytlight
+import shytlight_simulator as shytlight
 import numpy as np
 from palettable import wesanderson
 
 
-class RainbowPattern(threading.Thread):
+class RaindropPattern(threading.Thread):
 
     def __init__(self, n_rows=5, n_led=8):
-        super(RainbowPattern, self).__init__()
+        super(RaindropPattern, self).__init__()
 
         self.stopping = False
 
@@ -31,7 +31,7 @@ class RainbowPattern(threading.Thread):
         is_drop = np.zeros((self.n_rows, self.n_led)) 
 
         n_drops = 0 
-        while not ((n_drops == 100) and (brightness == 0).all()):
+        while (not ((n_drops == 100) and (brightness == 0).all()) and (self.stopping == False)):
             where_drop = np.where(is_drop)
 
             brightness[where_drop] = current_color
@@ -57,10 +57,10 @@ class RainbowPattern(threading.Thread):
  
     
     def run(self):
-        current_color = random_color()
+        current_color = self.random_color()
         while(self.stopping == False):
-            current_color = random_color()
-            raindrops(current_color)
+            current_color = self.random_color()
+            self.raindrops(current_color)
 
     def stop(self):
         self.stopping = True
