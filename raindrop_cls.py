@@ -1,13 +1,12 @@
 import threading
-import shytlight
 import numpy as np
 from palettable import wesanderson
 
 
-class RainbowPattern(threading.Thread):
+class RaindropPattern(threading.Thread):
 
     def __init__(self, n_rows=5, n_led=8):
-        super(RainbowPattern, self).__init__()
+        super(RaindropPattern, self).__init__()
 
         self.stopping = False
 
