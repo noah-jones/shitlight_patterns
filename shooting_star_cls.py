@@ -2,6 +2,7 @@
 
 
 
+import os
 import time
 import random
 import math
@@ -32,7 +33,8 @@ class ColourSystem:
     """
 
     # The CIE colour matching function for 380 - 780 nm in 5 nm intervals
-    cmf = np.genfromtxt('cie-cmf.txt', delimiter=",")
+    cie_path = os.path.join(os.path.dirname(__file__), 'cie-cmf.txt')
+    cmf = np.genfromtxt(cie_path, delimiter=",")
     def __init__(self, red, green, blue, white):
         """Initialise the ColourSystem object.
 
