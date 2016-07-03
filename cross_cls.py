@@ -7,6 +7,7 @@ from palettable import wesanderson
 class CrossPattern(threading.Thread):
 
     def __init__(self, n_rows=5, n_led=8):
+        super(CrossPattern, self).__init__()
         self.stopping = False
         self.n_rows = n_rows
         self.n_led = n_led
