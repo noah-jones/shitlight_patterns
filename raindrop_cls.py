@@ -57,10 +57,10 @@ class RaindropPattern(threading.Thread):
  
     
     def run(self):
-        current_color = random_color()
+        current_color = self.random_color()
         while(self.stopping == False):
-            current_color = random_color()
-            raindrops(current_color)
+            current_color = self.random_color()
+            self.raindrops(current_color)
 
     def stop(self):
         self.stopping = True
