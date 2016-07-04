@@ -11,6 +11,9 @@ from klapp_cls import KlappPatternFast
 from mr_clean_cls import MrCleanPattern, MrCleanFast, MrCleanSuperfast
 from wave_cls import WavePatternSlow, WavePatternFast
 
+from random_cls import RandomPattern
+
+
 patterns = [ ('Cross', CrossPattern),
              ('Shooting Star', ShootingStarPattern),
              ('Unicolor', UnicolorPattern),
@@ -22,4 +25,5 @@ patterns = [ ('Cross', CrossPattern),
              ('MR. Clean classic', MrCleanPattern),
              ('MR. Clean on drugs', MrCleanFast),
              ('MR. Clean on speed', MrCleanSuperfast),
+             ('Random', RandomPattern)
              ]
