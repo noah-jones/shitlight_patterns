@@ -1,5 +1,9 @@
 import threading
-import shytlight_simulator as shytlight
+
+import shytlight
+except ImportError:
+    import shytlight_simulator as shytlight
+
 import numpy as np
 from palettable import wesanderson
 
@@ -58,7 +62,10 @@ class CrossPattern(threading.Thread):
                 decreasing = False
 
             for _ in range(rep):
-                shytlight.add_frame(rep=1, frame=brightness)
+
+                if not self.stopping:
+                    shytlight.add_frame(rep=1, frame=brightness)
+
                 brightness[brightness > 0] -= np.log10(brightness[brightness > 0])
                 brightness[brightness < 10] = 0
 
@@ -83,7 +90,9 @@ class CrossPattern(threading.Thread):
                 rep = 5
 
             for _ in range(rep):
-                shytlight.add_frame(rep=1, frame=brightness)
+                
+                if not self.stopping:
+                    shytlight.add_frame(rep=1, frame=brightness)
                 brightness[brightness > 0] -= np.log10(brightness[brightness > 0])
                 brightness[brightness < 10] = 0
 
