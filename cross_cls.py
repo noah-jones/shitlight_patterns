@@ -33,12 +33,17 @@ class CrossPattern(threading.Thread):
 
     def one_flash(self, current_color):
         random_row = np.random.randint(self.n_rows)
+        random_row = 3
         random_led = np.random.randint(self.n_led)
         brightness = np.zeros((5, 8, 3))
         brightness[random_row, random_led, :] = current_color
 
         offset = 0
         decreasing = False
+
+        if not self.stopping:
+            shytlight.add_frame(rep=1, frame=brightness, on_beat=True)
+
         while not decreasing:
             decreasing = True
             rep = 1

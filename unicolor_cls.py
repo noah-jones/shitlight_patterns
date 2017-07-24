@@ -1,8 +1,9 @@
 import threading
-try:
-    import shytlight
-except ImportError:
-    import shytlight_simulator as shytlight
+
+import shytlight
+#except ImportError:
+#    import shytlight_simulator as shytlight
+
 import numpy as np
 from palettable import wesanderson
 
@@ -46,19 +47,19 @@ class UnicolorPattern(threading.Thread):
             brightness[:, :, 0] = current_color[0] + red_transition[_]
             brightness[:, :, 1] = current_color[1] + green_transition[_]
             brightness[:, :, 2] = current_color[2] + blue_transition[_]
-            shytlight.add_frame(rep=4, frame=brightness)
+            if self.stopping == False:
+                shytlight.add_frame(rep=4, frame=brightness)
             
         current_color = new_color
 
         return current_color
 
-    
+   
     def run(self):
-        current_color = self.random_color()
-        
+#        current_color = self.random_color()
+        current_color = [0, 0, 0]        
         while(self.stopping == False):
             current_color = self.unicolor(current_color)
-
-
+        
     def stop(self):
         self.stopping = True

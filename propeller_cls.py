@@ -36,6 +36,8 @@ class PropellerPattern(threading.Thread):
                 # resize image to our real led size
                 test_geometry = cv2.resize(bl_circles,(8,5))[::,:,:]
                 # add frame to buffer
+                if self.stopping:
+                    break
                 shytlight.add_frame(2, test_geometry)
 
 class PropellerPatternSlow(PropellerPattern):

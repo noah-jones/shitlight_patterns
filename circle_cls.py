@@ -1,4 +1,7 @@
-import shytlight_simulator as shytlight
+try:
+    import shytlight
+except:
+    import shytlight_simulator as shytlight
 import time
 import cv2
 import numpy as np
@@ -43,7 +46,8 @@ class CirclePattern(threading.Thread):
               # resize image to our real led size
               test_geometry = cv2.resize(bl_circles,(8,5))
               # add frame to buffer
-              shytlight.add_frame(1, test_geometry)
+              if not self.stopping:
+                  shytlight.add_frame(1, test_geometry)
 
 
 

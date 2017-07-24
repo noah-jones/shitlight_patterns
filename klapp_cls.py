@@ -1,4 +1,7 @@
-import shytlight_simulator as shytlight
+try:
+    import shytlight
+except:
+    import shytlight_simulator as shytlight
 import time
 import cv2
 import numpy as np

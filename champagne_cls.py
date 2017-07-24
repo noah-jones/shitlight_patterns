@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
 
+
+
 import os
 import time
 import random
 import math
-
 import threading
-import shytlight
-# imported from main thread
 
-# from http://scipython.com/blog/converting-a-spectrum-to-a-colour/
+try:
+    import shytlight
+except:
+    import shytlight_simulator as shytlight
+
 
 import numpy as np
-#from scipy.constants import h, c, k
+
 h = 6.626e-34
 c = 299792458
 k = 1.38e-23
@@ -111,16 +114,6 @@ cs_hdtv = ColourSystem(red=xyz_from_xy(0.67, 0.33),
                        blue=xyz_from_xy(0.15, 0.06),
                        white=illuminant_D65)
 
-cs_smpte = ColourSystem(red=xyz_from_xy(0.63, 0.34),
-                        green=xyz_from_xy(0.31, 0.595),
-                        blue=xyz_from_xy(0.155, 0.070),
-                        white=illuminant_D65)
-
-cs_srgb = ColourSystem(red=xyz_from_xy(0.64, 0.33),
-                       green=xyz_from_xy(0.30, 0.60),
-                       blue=xyz_from_xy(0.15, 0.06),
-                       white=illuminant_D65)
-
 
 
 def planck(lam, T):
@@ -143,46 +136,69 @@ def black_body_color(K):
     rgb = cs_hdtv.spec_to_rgb(spec)
     return rgb*255
 
-class ShootingStarPattern(threading.Thread):
+def adsr(periode,a_d_s_r,overdrive):
+    times = [round(x * periode) for x in a_d_s_r]
+    t = 1
+    
+    times[3] = periode - times[0] - times[1] - times[2]
+
+    if overdrive > 1:
+        slevel = 1./overdrive
+        alevel = 1
+
+    else:
+        s = overdrive
+        alevel = overdrive
+        slevel = 1
+    
+    return np.concatenate((np.linspace(0,alevel,times[0]), np.linspace(alevel,slevel,times[1]),
+        np.linspace(slevel,slevel,times[2]), np.linspace(slevel,0,times[3])))
+
+class ChampagnePattern(threading.Thread):
     def __init__(self):
-        super(ShootingStarPattern,self).__init__()
+        super(ChampagnePattern, self).__init__()
+        self.stopping = False
         # calculate colors
         self.colormap = [black_body_color(10000*(i/256.)+2000) for i in range(256)]
-        self.chance = 0.001
+        self.chance = 0.01
         self.rep = 2
         self.frame = shytlight.t_chitframe()
-        self.particles = [0]*40
-        self.stopping = False
+        self.period = 255
+        self.sparck_freq = 7.
+        self.particles = [self.period]*40
+
+        self.a_d_s_r = [0.1,0.4,0.2,0.3]
+        self.overdrive = 1.2
+
+        self.envel = adsr(self.period, self.a_d_s_r, self.overdrive)
+
+        self.k_center = 60
+        self.amp = 10
 
     def stop(self):
         self.stopping = True
 
+    def get_brightness(self,t):
+        if t<len(self.envel):
+            return self.envel[t]
+        else:
+            return 0.0
+        
+    def get_color(self,t):
+        return self.colormap[int(round(np.sin(2*np.pi*self.sparck_freq/self.period*t)*self.amp+self.k_center))]
+
+
     def run(self):
-        while(self.stopping == False):
+        while not self.stopping:
             for i, color in enumerate(self.particles):
-               if self.stopping:
-                   break
-               if random.random() < self.chance:
-                    if self.particles[i] <= 10:
-                         self.particles[i] = 511
-               elif color > 256+128+64:
-                    self.particles[i] -= 1
-                    self.frame.brightness[(i//8)][(i%8)][:] =[int (f) for f in
-                            self.colormap[0]*(-color+512.)/64.]
-               elif color > 256:
-                    self.particles[i] -= 1
-                    self.frame.brightness[(i//8)][(i%8)][:] = [int (f) for f in
-                            self.colormap[448-color]]
-               elif color >= 128:
-                    self.particles[i] -= 1
-                    self.frame.brightness[i//8][i%8][:] = [int (f) for f in
-                            self.colormap[255]*(color-128.)/128.]
-               elif color > 0:
-                    self.particles[i] -= 1
-                    self.frame.brightness[i//8][i%8][:] = [0,0,0]
+                   if self.stopping:
+                       break
+                   if random.random() < self.chance:
+                        if self.particles[i] >= self.period:
+                             self.particles[i] = 0
+                   if (color>=0 and color<self.period):
+                       self.particles[i]+=1
+                       envelope = self.get_brightness(self.particles[i])
+                       self.frame.brightness[(i//8)][(i%8)][:] = [int (f) for f in self.get_color(color)*envelope]
             if not self.stopping:
                 shytlight.add_frame(self.rep, self.frame)
-
-
-
-

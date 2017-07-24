@@ -1,5 +1,8 @@
 import threading
-import shytlight_simulator as shytlight
+import shytlight
+#except:
+#    import shytlight_simulator as shytlight
+
 import numpy as np
 from palettable import wesanderson
 
@@ -26,12 +29,42 @@ class RaindropPattern(threading.Thread):
         return current_color
 
 
+#    def raindrops(self, current_color):
+#
+#        random_row = np.random.randint(self.n_rows)
+#        brightness = np.zeros((self.n_rows, self.n_led, 3))
+#        is_drop = np.zeros((self.n_rows, self.n_led)) 
+#        is_drop[random_row, 0] = 1
+#        where_drop = np.where(is_drop)
+#
+#        brightness[where_drop] = current_color
+#
+#        while not (brightness == 0).all():
+#            where_drop = np.where(is_drop)
+#            brightness[where_drop] = current_color
+#            is_drop[where_drop] = 0
+#            rows, leds = where_drop[0], where_drop[1]
+#            mask = leds < self.n_led - 1
+#            rows = rows[mask]
+#            leds = leds[mask] + 1
+#            where_drop = (rows, leds) 
+#            is_drop[where_drop] = 1
+#
+##            if ((np.random.random() < 0.10) or (brightness == 0).all()) and (n_drops < 100):
+##                if (is_drop[random_row, :2] == 0).all():
+##                    is_drop[random_row, 0] = 1
+#
+#            for __ in range(4):
+#                brightness[brightness > 0] -= np.log10(brightness[brightness > 0])
+#                shytlight.add_frame(rep=1, frame=brightness)
+#                brightness[brightness < 1.5] = 0
+ 
     def raindrops(self, current_color):
         brightness = np.zeros((self.n_rows, self.n_led, 3))
         is_drop = np.zeros((self.n_rows, self.n_led)) 
 
         n_drops = 0 
-        while (not ((n_drops == 100) and (brightness == 0).all()) and (self.stopping == False)):
+        while (not ((n_drops == 20) and (brightness == 0).all()) and (self.stopping == False)):
             where_drop = np.where(is_drop)
 
             brightness[where_drop] = current_color
@@ -44,7 +77,7 @@ class RaindropPattern(threading.Thread):
             where_drop = (rows, leds) 
             is_drop[where_drop] = 1
 
-            if ((np.random.random() < 0.10) or (brightness == 0).all()) and (n_drops < 100):
+            if ((np.random.random() < 0.10) or (brightness == 0).all()) and (n_drops < 20):
                 random_row = np.random.randint(self.n_rows)
                 if (is_drop[random_row, :2] == 0).all():
                     is_drop[random_row, 0] = 1
@@ -52,7 +85,8 @@ class RaindropPattern(threading.Thread):
 
             for __ in range(4):
                 brightness[brightness > 0] -= np.log10(brightness[brightness > 0])
-                shytlight.add_frame(rep=1, frame=brightness)
+                if not self.stopping:
+                    shytlight.add_frame(rep=1, frame=brightness)
                 brightness[brightness < 1.5] = 0
  
     
